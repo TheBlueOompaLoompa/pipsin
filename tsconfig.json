@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "outDir": "./public/js",
+      "allowJs": true,
+      "target": "es6"
+    },
+    "include": ["./src/**/*"]
+}

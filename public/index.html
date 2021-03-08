@@ -8,10 +8,8 @@
     <title>Pipsin</title>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
-
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-        https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
 
     <script>
         // Your web app's Firebase configuration
@@ -28,12 +26,104 @@
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-        
+
         // Get a reference to the database service
         var database = firebase.database();
+
+        // Authentication
+        var auth = firebase.auth();
+        var userId = "";
+        var authenticated = false;
+
+        auth.signInAnonymously()
+            .then(() => {
+                // Signed in..
+                console.log("Signed in");
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+            });
     </script>
+    <script src="js/room.js"></script>
 </head>
 <body>
+    <!-- Connection status -->
+    <div class="sbar"><span class="white" id="constate">Connecting to server...</span></div>
+    <br>
+    <br>
+    <div id="gameManageInput">
+        <input id="name" type="text">
+        <br>
+        <input id="code" type="text">
+        <br>
+        <button id="createGame">Create Game</button>
+        <button id="joinGame">Join Game</button>
+    </div>
+
+    <!-- Player List -->
+    <div style="position: fixed; top: 0; right: 0; width: 30%; height:100%; background-color: gray; visibility: hidden;" id="players">
+        <h3>Players: </h3>
+        <div id="playernames">
+
+        </div>
+    </div>
+
+    <!-- Game status -->
+    <div style="position: fixed; bottom: 0px;" class="sbar"><span class="white" id="codeDisp">Waiting for game...</span><button id="copycode">Copy Code</button></div>
+    
+    <script>
+        let nameInput = document.getElementById('name');
+        let codeInput = document.getElementById('code');
+        let createGameButton = document.getElementById('createGame');
+        let joinGameButton = document.getElementById('joinGame');
+
+        let connectionState = document.getElementById('constate');
+
+        let codeDisp = document.getElementById('codeDisp');
+        let gameId = '';
+
+        // Code Copier
+        function copyCode(){
+            let codeCopyInput = document.createElement('input');
+            codeCopyInput.type = 'text';
+            codeCopyInput.value = gameId;
+            document.body.appendChild(codeCopyInput);
+
+            codeCopyInput.select();
+            codeCopyInput.setSelectionRange(0, 99999);
+
+            document.execCommand('copy');
+            
+            document.body.removeChild(codeCopyInput);
+        }
+
+        document.getElementById('copycode').onclick = copyCode;
+
+        // Auth state monitor
+        auth.onAuthStateChanged(user => {
+            if(user){
+                userId = user.uid;
+                authenticated = true;
+                connectionState.innerText = 'Connected';
+                // Create Game Button
+                createGameButton.onclick = function(){
+                    gameId = createRoom();
+                    codeDisp.innerText = `Code: ${gameId}`;
+                    document.getElementById('players').style.visibility = "visible";
+                }
+
+                // Join Game Button
+                joinGameButton.onclick = function(){
+                    gameId = codeInput.value;
+                    joinRoom(gameId, nameInput.value, userId).then(successful => {
+                        console.log(successful);
+                        if(successful) codeDisp.innerText = `Joined game: ${gameId}`;
+                    });
+                }
+            }
+        });
+    </script>
 </body>
 </html>

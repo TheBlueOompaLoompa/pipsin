@@ -62,6 +62,9 @@ function createRoom(){
         nameNode.className = 'white';
         nameNode.id = snapshot.key;
 
+        let linebreak = document.createElement('br');
+
+        playerList.prepend(linebreak);
         playerList.prepend(nameNode);
         console.log(playerAddedData);
     });

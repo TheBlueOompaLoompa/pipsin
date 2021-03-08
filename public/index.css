@@ -1,0 +1,14 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: Arial;
+}
+
+.sbar {
+    width: 100%;
+    background-color: gray;
+}
+
+.white {
+    color: white;
+}

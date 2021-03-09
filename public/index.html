@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-storage.js"></script>
 
     <script>
         // Your web app's Firebase configuration
@@ -29,6 +30,9 @@
 
         // Get a reference to the database service
         var database = firebase.database();
+
+        // Get a reference to the storage service
+        var storage = firebase.storage();
 
         // Authentication
         var auth = firebase.auth();
@@ -64,6 +68,11 @@
     </div>
 
     <!-- Game -->
+    <div class="centerv unselectable" style="visibility: hidden;">
+        <div class="centerh unselectable">
+            <button class="forceselectable" id="start_button">Start Game</button>
+        </div>
+    </div>
     <div id="game"></div>
 
     <!-- Player List -->
@@ -116,6 +125,21 @@
                     gameId = createRoom();
                     codeDisp.innerText = `Code: ${gameId}`;
                     document.getElementById('players').style.visibility = "visible";
+                    let startButton = document.getElementById('start_button')
+                    startButton.style.visibility = "visible";
+
+                    // Load Game
+                    startButton.onclick = async function(){
+                        let gameListDownloadURL = await storage.ref('games/games.txt').getDownloadURL();
+                        var xhr = new XMLHttpRequest();
+                        xhr.responseType = "text";
+                        xhr.onload = (event) => {
+                            var gameList = xhr.response;
+                            console.log(gameList);
+                        };
+                        xhr.open('GET', gameListDownloadURL);
+                        xhr.send();
+                    }
                 }
 
                 // Join Game Button

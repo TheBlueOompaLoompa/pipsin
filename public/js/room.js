@@ -40,7 +40,9 @@ function createRoom(){
     roomRef.set({
         createdAt: currentTime,
         creator: userId,
-        players: []
+        players: [],
+        state: 'waiting',
+        game: '',
     }).then(e => {
         document.getElementById('gameManageInput').style.visibility = "hidden";
         roomRef.onDisconnect().remove((err)=> {

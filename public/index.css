@@ -12,3 +12,33 @@ body {
 .white {
     color: white;
 }
+
+.centerh {
+    width: 70%;
+}
+
+.centerh * {
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.centerv {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.unselectable {
+    user-select: none;
+    pointer-events:none;
+}
+
+.forceselectable {
+    pointer-events: initial;
+}

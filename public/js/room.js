@@ -42,7 +42,7 @@ function createRoom(){
         creator: userId,
         players: []
     }).then(e => {
-        document.getElementById('gameManageInput').style = "visibility: hidden;"
+        document.getElementById('gameManageInput').style.visibility = "hidden";
         roomRef.onDisconnect().remove((err)=> {
             if (err) {
                 console.error('could not establish onDisconnect event', err);

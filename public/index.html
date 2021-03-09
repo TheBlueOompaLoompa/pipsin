@@ -51,6 +51,8 @@
             });
     </script>
     <script src="js/room.js"></script>
+    <script src="js/host.js"></script>
+    <script src="js/client.js"></script>
 </head>
 <body>
     <!-- Connection status -->
@@ -130,15 +132,8 @@
 
                     // Load Game
                     startButton.onclick = async function(){
-                        let gameListDownloadURL = await storage.ref('games/games.txt').getDownloadURL();
-                        var xhr = new XMLHttpRequest();
-                        xhr.responseType = "text";
-                        xhr.onload = (event) => {
-                            var gameList = xhr.response.split('\n');
-                            console.log(gameList);
-                        };
-                        xhr.open('GET', gameListDownloadURL);
-                        xhr.send();
+                        await database.ref(`/games/${gameId}`).child('state').set('playing')
+                        await pickNewGame();
                     }
                 }
 
@@ -147,7 +142,10 @@
                     gameId = codeInput.value;
                     joinRoom(gameId, nameInput.value, userId).then(successful => {
                         console.log(successful);
-                        if(successful) codeDisp.innerText = `Joined game: ${gameId}`;
+                        if(successful){ 
+                            codeDisp.innerText = `Joined game: ${gameId}`;
+                            setupClientHooks();
+                        }
                     });
                 }
             }

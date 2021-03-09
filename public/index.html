@@ -134,7 +134,7 @@
                         var xhr = new XMLHttpRequest();
                         xhr.responseType = "text";
                         xhr.onload = (event) => {
-                            var gameList = xhr.response;
+                            var gameList = xhr.response.split('\n');
                             console.log(gameList);
                         };
                         xhr.open('GET', gameListDownloadURL);

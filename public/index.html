@@ -52,6 +52,7 @@
     </script>
     <script src="js/room.js"></script>
     <script src="js/host.js"></script>
+    <!-- Client script-->
     <script src="js/client.js"></script>
 </head>
 <body>
@@ -75,7 +76,7 @@
             <button class="forceselectable" id="start_button">Start Game</button>
         </div>
     </div>
-    <div id="game"></div>
+    <div id="game" style="position: fixed; top: 15px; left: 10px;"></div>
 
     <!-- Player List -->
     <div style="position: fixed; top: 0; right: 0; width: 30%; height:100%; background-color: gray; visibility: hidden; padding: 5px;" id="players">
@@ -86,16 +87,15 @@
     </div>
 
     <!-- Game status -->
-    <div style="position: fixed; bottom: 0px;" class="sbar"><span class="white" id="codeDisp">Waiting for game...</span><button id="copycode">Copy Code</button></div>
+    <div style="position: fixed; bottom: 0px;" class="sbar" id="gameStatus"><span class="white" id="codeDisp">Waiting for game...</span><button id="copycode">Copy Code</button></div>
     
     <script>
         let nameInput = document.getElementById('name');
         let codeInput = document.getElementById('code');
         let createGameButton = document.getElementById('createGame');
         let joinGameButton = document.getElementById('joinGame');
-
+    
         let connectionState = document.getElementById('constate');
-
         let codeDisp = document.getElementById('codeDisp');
         let gameId = '';
 
@@ -132,19 +132,18 @@
 
                     // Load Game
                     startButton.onclick = async function(){
-                        await database.ref(`/games/${gameId}`).child('state').set('playing')
-                        await pickNewGame();
+                        await pickNewGame(document.getElementById('game'));
                     }
                 }
 
                 // Join Game Button
                 joinGameButton.onclick = function(){
                     gameId = codeInput.value;
-                    joinRoom(gameId, nameInput.value, userId).then(successful => {
+                    joinRoom(gameId, nameInput.value, userId).then(async function(successful){
                         console.log(successful);
                         if(successful){ 
                             codeDisp.innerText = `Joined game: ${gameId}`;
-                            setupClientHooks();
+                            await setupClientHooks(gameId, document.getElementById('game'));
                         }
                     });
                 }
